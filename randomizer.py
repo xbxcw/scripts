@@ -76,7 +76,7 @@ class RandomizerUI(baseWindow.Window):
         numObjects = cmds.intField(self.intField, query=True, value=True)
 
         createObjects(mode, numObjects)
-        onRandomClick()
+        self.onRandomClick()
 
     def onRandomClick(self, *args):
         radio = cmds.radioCollection("randomMode", query=True, select=True)
