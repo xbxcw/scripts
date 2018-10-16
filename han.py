@@ -56,14 +56,15 @@ for folder in folders:
     transforms = []
     obj = myFolder + folder +'/'+ mc.getFileList(folder=myFolder+folder, filespec='*.obj')[0]
     mc.file(obj, i=True, ns='wang%02d' % i)
-    geometry = mc.ls(geometry=True)	
+    geometry = mc.ls(geometry=True)
+    mc.hyperShade(a=shader, assign=True)
     shader = mc.shadingNode('blinn', asShader=True)
     file_node=mc.shadingNode('file', asTexture=True)
     mc.setAttr(file_node+'.fileTextureName', 'D:\HKW\danrenzuoyi\sourceimages\Hanjiangfu\T_Cabinet01_B.png', type="string")
-    shading_group= mc.sets(renderable=True,noSurfaceShader=True,empty=True)
-    mc.connectAttr('%s.outColor' %shader ,'%s.surfaceShader' %shading_group)
     mc.connectAttr('%s.outColor' %file_node, '%s.color' %shader)
-    
+    mc.FBXExport('-file', 'C:/Users/HYC/Desktop/aa/'+geometry[0])
+    mc.file(new=True, force=True)
+
 
 shader = mc.shadingNode('blinn', asShader=True)
 file_node=mc.shadingNode('file', asTexture=True)
