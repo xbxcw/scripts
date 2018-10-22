@@ -1,0 +1,18 @@
+global proc MaxToMayaMenu()
+{
+    global string $myMenuMain;
+        if (`menu -exists $myMenuMain`)
+           deleteUI $myMenuMain;
+    string $name = "MaxToMaya";
+ 
+    //to hook your menu into the main window
+    global string $gMainWindow;
+    $myMenuMain = `menu -p $gMainWindow -tearOff true -l $name`;
+ 
+    //here you can insert your labels and commands for the menu items. Replace test_01, 02, 03 with your own mel scripts.
+        menuItem -p $myMenuMain -l "MaxToMaya: Import" -c "python \"m2mRun.start()\"";
+}
+;
+ 
+python "import m2mRun";
+MaxToMayaMenu;

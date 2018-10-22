@@ -72,3 +72,28 @@ mc.setAttr(file_node+'.fileTextureName', 'D:\HKW\danrenzuoyi\sourceimages\Hanjia
 shading_group= mc.sets(renderable=True,noSurfaceShader=True,empty=True)
 mc.connectAttr('%s.outColor' %shader ,'%s.surfaceShader' %shading_group)
 mc.connectAttr('%s.outColor' %file_node, '%s.color' %shader)
+
+
+
+# 材质球部分
+shader = mc.shadingNode('blinn', asShader=True)  # 材质球
+file_node=mc.shadingNode('file', asTexture=True)  # 图片
+mc.setAttr(file_node+'.fileTextureName', 'D:\HKW\danrenzuoyi\sourceimages\Hanjiangfu\T_Cabinet01_B.png', type="string")  # 添加图片地址
+mc.connectAttr('%s.outColor' %file_node, '%s.color' %shader)  # 将图片输出给材质球
+
+# 模型部分
+obj = myFolder + folder +'/'+ mc.getFileList(folder=myFolder+folder, filespec='*.obj')[0]  # 获取模型文件
+mc.file(obj, i=True, ns='wang%02d' % i)  # 导入模型
+geometry = mc.ls(geometry=True)  # 选择模型
+mc.select(geometry[0])
+print geometry
+mc.hyperShade(a=shader, assign=True)  # 赋予材质
+
+mc.select(mc.listRelatives(mc.ls(geometry=True), p=True, path=True), r=True)
+print mesh
+
+mc.FBXExport('-file', 'C:/Users/Intime/Desktop/aa/a%d' %i)  # 导出模型
+
+
+
+mc.file(new=True, force=True)  # 刷新场景

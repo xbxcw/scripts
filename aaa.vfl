@@ -1,0 +1,5 @@
+void pyramid()
+{
+    printf('aaaa')
+}
+pyramid
