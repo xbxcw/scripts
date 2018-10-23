@@ -1,11 +1,13 @@
 import os
 from maya import cmds as mc
 import time
+import shutil
 
 path = mc.workspace(fn=True) + '/'
-
-def createPBS(name='a', num=1, textures=None):
-    name = 'M_' + name + '_LOD%d' %num
+names = ['sofa03','table01', 'kettle', 'tea', 'stone', 'sofa02', 'table02', 'wall01', 'cabinet01', 'altar01', 'wall02', 'wall03', 'table03', 'cabinet02', 'decoration01', 'decoration02', 'altar02', 'decoration03', 'decoration04', 'decoration05', 'decoration06', 'decoration07', 'decoration08', 'decoration09', 'candle01', 'candle02', 'tableware', 'door01', 'cabinet03', 'decoration10', 'decoration11']
+def createPBS(name='a', num=0, textures=None, model=[]):
+    name = 'M_' + name + '_LOD0'
+    print name
     for i in range(num):
         shader = mc.shadingNode('StingrayPBS', asShader=True, name=name)
         mc.shaderfx(sfxnode=shader, initShaderAttributes=True)
@@ -45,17 +47,17 @@ def createPBS(name='a', num=1, textures=None):
         # mc.connectAttr(em+'.outColor', shader+'.TEX_emissive_map')
         mc.connectAttr(ao+'.outColor', shader+'.TEX_ao_map')
 
-
-geometry = mc.ls(sl=True)
+        mc.sets('%s' % model[i], e=True, fe='%s' % shading_group)
 
 def renamemodel(geometry, name='a'):
-    
+    new_geometry = []
     for i in geometry:
 
-        mc.rename(i, name+'_LOD0')
+        new_geometry.append(mc.rename(i, 'S_'+name+'_LOD0'))
+    return new_geometry
 
 def renametextures(name='a'):
-    
+
     textures = mc.getFileList(folder=path, filespec='*.png')
     num = 0
     tex = []
@@ -69,26 +71,42 @@ def renametextures(name='a'):
         tex.append(b)
         
         os.rename(a, b)
+    return tex
 
+def exportFbx(path, name, geometry):
+    dir = path + 'FBX'
+    if os.path.exists(dir) is False:
+        os.makedirs(dir)
+    mc.select(geometry)
+    mc.FBXExport('-file', dir + '/%s' %name, '-s')
 
+def moveTextures(textures, dst):
+    for texture in textures:
+        print texture
+        shutil.move(r'%s' %texture, r'%s' %dst)
 
 
 if __name__ == '__main__':
-    path = mc.workspace(fn=True) + '/'
+    PATH = mc.workspace(fn=True) + '/'
+    UNITY_PATH = 'D:/Unity/tt/Assets/'
+    geometry = mc.ls(sl=True)
     name = 'sofa'
-    # renamemodel(geometry, name)
-    # renametextures(name)
-    textures = mc.getFileList(folder=path, filespec='*.png')
+    geometry = renamemodel(geometry, name)
+    print geometry
+    renametextures(name)
+    textures = mc.getFileList(folder=PATH, filespec='*.png')
     num = 0
     a = []
     tex = []
-    for i in textures:            
-        b = path + i
-        print b
-        
+    imgs = []
+    for i in textures:
+        b = PATH + i
+        imgs.append(b)
         a.append(b)
         if len(a)%3 == 0 and len(a) != 0:
             tex.append(a)
             
             a = []
-    createPBS('a', 1, tex)
+    createPBS(name, 3, tex, geometry)
+    exportFbx(UNITY_PATH, name, geometry)
+    moveTextures(imgs,UNITY_PATH)
