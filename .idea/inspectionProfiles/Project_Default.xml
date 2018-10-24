@@ -12,6 +12,8 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="maya.cmds.polyCube" />
+          <option value="maya.cmds.shadingNode" />
+          <option value="maya.cmds.*" />
         </list>
       </option>
     </inspection_tool>
